@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Lobby</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <h1>Multiplayer Lobby</h1>
+    <input type="text" id="name" placeholder="Enter Name">
+    <button onclick="joinGame()">Join Game</button>
+    <h2>Players:</h2>
+    <ul id="playerList"></ul>
+    <button onclick="startGame()">Start Game</button>
+
+    <script>
+        var socket = io("http://localhost:5000");
+
+        function joinGame() {
+            var name = document.getElementById("name").value;
+            socket.emit("join", { name: name });
+        }
+
+        socket.on("update_lobby", function(data) {
+            var playerList = document.getElementById("playerList");
+            playerList.innerHTML = "";
+            data.players.forEach(player => {
+                var li = document.createElement("li");
+                li.textContent = player;
+                playerList.appendChild(li);
+            });
+        });
+
+        function startGame() {
+            socket.emit("start_game");
+        }
+
+        socket.on("game_started", function() {
+            alert("Game is starting!");
+        });
+    </script>
+</body>
+</html>

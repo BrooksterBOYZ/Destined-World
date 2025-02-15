@@ -31,20 +31,26 @@ country_positions = {
 running = True
 selected_country = None
 
+# Define font
+font = pygame.font.Font(None, 36)
+
+# Game loop
 while running:
     screen.fill((0, 0, 0))  # Clear screen
     screen.blit(world_map, (0, 0))  # Draw world map
 
     # Draw country markers
     for country, pos in country_positions.items():
-        pygame.draw.circle(screen, (255, 0, 0), pos, 5)
+        if selected_country == country:
+            pygame.draw.circle(screen, (0, 255, 0), pos, 10)  # Highlight selected country in green
+        else:
+            pygame.draw.circle(screen, (255, 0, 0), pos, 5)  # Normal markers in red
     
     # Display selected country
     if selected_country:
-        font = pygame.font.Font(None, 36)
         text = font.render(f"Selected: {selected_country}", True, (255, 255, 255))
         screen.blit(text, (50, 50))
-
+    
     pygame.display.flip()
 
     # Handle events
@@ -54,8 +60,10 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
             for country, pos in country_positions.items():
-                if abs(x - pos[0]) < 10 and abs(y - pos[1]) < 10:
+                # Increase the click area to improve accuracy
+                if abs(x - pos[0]) < 15 and abs(y - pos[1]) < 15:
                     selected_country = country
                     print(f"Selected {country}")
 
 pygame.quit()
+

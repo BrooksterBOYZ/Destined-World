@@ -1,0 +1,61 @@
+import pygame
+import json
+
+# Initialize Pygame
+pygame.init()
+
+# Screen Setup
+WIDTH, HEIGHT = 1200, 700
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("World Domination Game")
+
+# Load World Map Image
+world_map = pygame.image.load("world_map.png")
+world_map = pygame.transform.scale(world_map, (WIDTH, HEIGHT))
+
+# Load Countries Data (Positions for clicking)
+with open("countries.json", "r") as file:
+    COUNTRIES = json.load(file)
+
+# Example country positions (should be replaced with actual coordinates)
+country_positions = {
+    "USA": (300, 250),
+    "China": (900, 300),
+    "Russia": (800, 200),
+    "India": (850, 400),
+    "Germany": (600, 250),
+    "Brazil": (400, 500)
+}
+
+# Game Loop
+running = True
+selected_country = None
+
+while running:
+    screen.fill((0, 0, 0))  # Clear screen
+    screen.blit(world_map, (0, 0))  # Draw world map
+
+    # Draw country markers
+    for country, pos in country_positions.items():
+        pygame.draw.circle(screen, (255, 0, 0), pos, 5)
+    
+    # Display selected country
+    if selected_country:
+        font = pygame.font.Font(None, 36)
+        text = font.render(f"Selected: {selected_country}", True, (255, 255, 255))
+        screen.blit(text, (50, 50))
+
+    pygame.display.flip()
+
+    # Handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = pygame.mouse.get_pos()
+            for country, pos in country_positions.items():
+                if abs(x - pos[0]) < 10 and abs(y - pos[1]) < 10:
+                    selected_country = country
+                    print(f"Selected {country}")
+
+pygame.quit()
